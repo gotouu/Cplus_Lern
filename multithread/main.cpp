@@ -57,14 +57,16 @@ void main() {
 		th.Join();
 		printf("5\n");
 	}*/
+
 	std::promise<int> p00;
 	int num = 0;
 	printf("1\n");
 
+	//非同期処理登録・開始
 	std::thread th([&p00, &num]() {
 		printf("m1\n");
-	// この後に２・３が来てJoinの処理待ちでｍ２が来て最後に５が来てほしい
 	num = 0;
+	// この待ちの間にに２・３・４が来てJoinの処理同期でｍ２が来て最後に５が来てほしい
 	for (num = 0; num < 100; num++) {
 		num++;
 		Sleep(10);
@@ -74,11 +76,26 @@ void main() {
 	printf("m2\n");
 		});
 
-	p00.get_future().get();//非同期処理開始
+	// 非同期のオブジェクトを受け取る future を宣言する
+	//std::future<int> f00 = p00.get_future();
+	
 	printf("2\n");
 	printf("3\n");
 	printf("4\n");
-	th.join();//非同期処理終了待ち
+	//f00.get();
+	th.join();//スレッド終了待ち（合流
 	printf("5\n");
+
+	std::cout << "------複数スレッド同時処理------"<<std::endl;
+	// 実行する度処理順が変わるから〇
+	auto threadF = [](std::string str) { for (int i = 0; i < 10; i++) std::cout << str << " : " << i << std::endl; };
+	std::thread thread1([=]() {threadF("thread1"); });
+	std::thread thread2([=]() {threadF("thread2"); });
+	std::thread thread3([=]() {threadF("thread3"); });
+
+	thread1.join();
+	thread2.join();
+	thread3.join();
+
 }
 
