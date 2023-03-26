@@ -5,6 +5,14 @@
 #include<future>
 #include<Windows.h>
 
+//std::promise、future
+//Setしたとこまでの処理を返すのでメインスレッドで受け取って（Getして）くれたら反映しますよ。
+//ただし、１promisに付き１SetGetしかできないため複数処理返すポイントが欲しい場合は複数Promiseが必要。
+//受け取るFutureは一つでいい
+//
+//std::thread
+//とにかく非同期で動かすだけ。アプリケーション終了時までにこれをJoinで完了させとかなければいけない
+
 template<class T>
 using shared_promise = std::shared_ptr<std::promise<T>>;
 
