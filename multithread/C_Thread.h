@@ -26,6 +26,7 @@ public:
 	void AddTask(C_Task& task);
 	void ExecuteTasks();
 	void TryGetTask();
+	void Join();
 private:
 	enum class STATE
 	{

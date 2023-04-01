@@ -16,7 +16,7 @@ void C_Thread::ExecuteTasks()
 	m_thread = new std::thread(
 		[this]() {
 			for (auto task : m_tasks)
-			task->ExecuteTask();
+				task->ExecuteTask();
 		}
 	);
 }
@@ -29,9 +29,9 @@ void C_Thread::TryGetTask()
 	// 配列サイズが変わるのでここでMax値を取ってそれだけ回す
 	int max = m_tasks.size();
 	for (int num = 0; num < max; num++) {
-		bool comp = m_tasks[num]->IsCompletedTask();
-		// タイムアウトしていれば終了
-		if (comp) {
+		bool res = m_tasks[num]->IsCompletedTask();
+		// 完了していた場合取り除く
+		if (res) {
 			auto itr = m_tasks.begin();
 			std::advance(itr, num);
 			m_tasks.erase(itr);
@@ -40,10 +40,14 @@ void C_Thread::TryGetTask()
 		}
 	}
 
-	if (m_tasks.empty()) {
-		m_thread->join();
-		m_state = STATE::DEFAULT;
-	}
+	if (m_tasks.empty())
+		Join();
+}
+
+void C_Thread::Join()
+{
+	m_thread->join();
+	m_state = STATE::DEFAULT;
 }
 
 
