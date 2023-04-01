@@ -4,15 +4,16 @@ void main() {
 
 	printf("1\n");
 	std::unique_ptr<C_Thread> th = std::make_unique<C_Thread>();
-	th->RegistFunction([]() {Sleep(500); printf("m2\n"); }, 1);
-	th->RegistFunction([]() {Sleep(500); printf("m2\n"); }, 1);
-	th->ExecuteThread();
-	th->GetFutureAll();
-	th->GetFutureAll();
+	std::unique_ptr<C_Task> task = std::make_unique<C_Task>();
+	task->AddFunc([]() {Sleep(500); std::cout << "m2" << std::endl; });
+	task->AddFunc([]() {Sleep(510); std::cout << "m2" << std::endl; });
+
+	th->AddTask(*task.get());
+	th->ExecuteTasks();
+	th->TryGetTask();
 	printf("3\n");
 	printf("4\n");
-	Sleep(2000);
-	th->Join();
+	th->TryGetTask();
 	/*
 	//std::promise<int> p00;
 	//std::promise<int> p01;
